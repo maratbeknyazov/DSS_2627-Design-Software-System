@@ -1,0 +1,184 @@
+Muratbaev_Albert_Lab1.txt
+Student: Albert Muratbaev
+Lab #1 - Python Classes and Objects (Exercises 1-8)
+All code was run in Python and its output was verified.
+
+================================================================================
+Exercise 1: Class with instance attributes
+================================================================================
+
+CODE
+class Vehicle:
+    def __init__(self, max_speed, mileage):
+        self.max_speed = max_speed
+        self.mileage = mileage
+
+car = Vehicle(180, 12)
+print("Max speed:", car.max_speed)
+print("Mileage:", car.mileage)
+
+OUTPUT
+Max speed: 180
+Mileage: 12
+
+================================================================================
+Exercise 2: Class without any variables and methods
+================================================================================
+
+CODE
+class Vehicle:
+    pass
+
+v = Vehicle()
+print(v)
+
+OUTPUT
+<__main__.Vehicle object at 0x000001D3C214F250>
+(the address differs on every machine; like the lecture says, without __str__
+Python returns the default string representation.
+Note: when the exercise is run inside my combined script, where the classes
+sit in separate functions, the repr shows
+<__main__.exercise2.<locals>.Vehicle at ...>; run as a standalone file by itself, it prints exactly the line shown above.)
+
+================================================================================
+Exercise 3: Child class Bus inherits everything from Vehicle
+================================================================================
+
+CODE
+class Vehicle:
+    def __init__(self, name, max_speed, mileage):
+        self.name = name
+        self.max_speed = max_speed
+        self.mileage = mileage
+
+class Bus(Vehicle):
+    pass
+
+bus = Bus("School Volvo", 180, 12)
+print("Vehicle Name:", bus.name, "Speed:", bus.max_speed, "Mileage:", bus.mileage)
+
+OUTPUT
+Vehicle Name: School Volvo Speed: 180 Mileage: 12
+
+================================================================================
+Exercise 4: Seating capacity with a default value of 50
+================================================================================
+
+CODE
+class Vehicle:
+    def __init__(self, name, max_speed, mileage):
+        self.name = name
+        self.max_speed = max_speed
+        self.mileage = mileage
+
+    def seating_capacity(self, capacity):
+        return f"The seating capacity of a {self.name} is {capacity} passengers"
+
+class Bus(Vehicle):
+    def seating_capacity(self, capacity=50):
+        return super().seating_capacity(capacity)
+
+bus = Bus("bus", 180, 12)
+print(bus.seating_capacity())
+
+OUTPUT
+The seating capacity of a bus is 50 passengers
+
+================================================================================
+Exercise 5: Class attribute (same value for every instance)
+================================================================================
+
+CODE
+class Vehicle:
+    color = "White"                       # class attribute, shared by all instances
+
+    def __init__(self, name, max_speed, mileage):
+        self.name = name
+        self.max_speed = max_speed
+        self.mileage = mileage
+
+class Bus(Vehicle):
+    pass
+
+class Car(Vehicle):
+    pass
+
+bus = Bus("School Volvo", 180, 12)
+car = Car("Audi Q5", 240, 18)
+print(f"Color: {bus.color}, Vehicle name: {bus.name}, Speed: {bus.max_speed}, Mileage: {bus.mileage}")
+print(f"Color: {car.color}, Vehicle name: {car.name}, Speed: {car.max_speed}, Mileage: {car.mileage}")
+
+OUTPUT
+Color: White, Vehicle name: School Volvo, Speed: 180, Mileage: 12
+Color: White, Vehicle name: Audi Q5, Speed: 240, Mileage: 18
+
+================================================================================
+Exercise 6: Override fare() with a 10% maintenance charge
+================================================================================
+
+CODE
+class Vehicle:
+    def __init__(self, name, mileage, capacity):
+        self.name = name
+        self.mileage = mileage
+        self.capacity = capacity
+
+    def fare(self):
+        return self.capacity * 100
+
+class Bus(Vehicle):
+    def fare(self):                         # override, calls the parent method
+        return super().fare() * 1.10        # + 10% maintenance charge
+
+School_bus = Bus("School Volvo", 12, 50)
+print("Total Bus fare is:", School_bus.fare())
+
+OUTPUT
+Total Bus fare is: 5500.0
+
+================================================================================
+Exercise 7: Which class does the object belong to?
+================================================================================
+
+CODE
+class Vehicle:
+    def __init__(self, name, mileage, capacity):
+        self.name = name
+        self.mileage = mileage
+        self.capacity = capacity
+
+class Bus(Vehicle):
+    pass
+
+School_bus = Bus("School Volvo", 12, 50)
+print(type(School_bus))
+print(type(School_bus).__name__)
+
+OUTPUT
+<class '__main__.Bus'>
+In my combined script the class lives inside exercise7(), so repr shows
+<class '__main__.exercise7.<locals>.Bus'>; as a standalone file the line above is exact.
+Bus
+
+================================================================================
+Exercise 8: Is School_bus also an instance of Vehicle?
+================================================================================
+
+CODE
+class Vehicle:
+    def __init__(self, name, mileage, capacity):
+        self.name = name
+        self.mileage = mileage
+        self.capacity = capacity
+
+class Bus(Vehicle):
+    pass
+
+School_bus = Bus("School Volvo", 12, 50)
+print(isinstance(School_bus, Vehicle))
+
+OUTPUT
+True
+
+(Yes - Bus inherits from Vehicle, so every Bus object is also a Vehicle
+instance, which is why isinstance() returns True.)

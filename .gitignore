@@ -1,0 +1,47 @@
+# --- Python junk ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+
+# --- Virtual environments / env files ---
+venv/
+.venv/
+env/
+.python-version
+.env
+.env.*
+
+# --- Test / tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+.nosetests
+
+# --- This workspace's junk ---
+tmp/
+*.bak
+*.tmp
+*.swp
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+nul
+
+# --- IDE / editor files ---
+.idea/
+.vscode/
+*.sublime-*
+
+# Note: output/pdf/ is NOT ignored - it holds the finished lab deliverables.
+
+# --- Lab deliverables: keep human-readable answer files, ignore junk only ---
+output/*.tmp
