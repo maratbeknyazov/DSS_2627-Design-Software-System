@@ -1,0 +1,131 @@
+Lab 2.1 - Reviewing a Requirements Document
+Student: Albert Muratbaev
+Defect letters: C contradiction, A ambiguous, T not testable, N not a requirement,
+                W wrong type.
+
+================================================================================
+EXERCISE 1 - The TTPU library system
+================================================================================
+
+1.1 The four contradictions
+
+Pair            | Why they cannot live together
+FR-01 & FR-02   | The maximum is 5 books, but FR-02 permits a 6th book.
+FR-04 & FR-06   | A reference book may not leave the building, yet FR-06 renews it
+                | online like an ordinary take-home loan.
+FR-07 & FR-08   | The same reminder is required both 2 days BEFORE the due date and
+                | only AFTER the book is already late.
+FR-16 & FR-17   | Keeping the full borrowing history forever conflicts with deleting
+                | identifying personal data 1 year after departure.
+
+1.2 The three lines that are not requirements
+
+ID      | What it really is      | Where it belongs
+FR-13   | Design decision        | In the design document, after technical evaluation.
+        | ("The database shall   |
+        | be MySQL 8.")          |
+FR-18   | Business goal          | In the library business plan or project plan; measured by
+        | (buying 200 books)     | the department, not by the software.
+NFR-03  | Impossible promise     | Nowhere; replace it with a measurable reliability target.
+        | ("never fail")         | (see 1.3)
+
+1.3 The four untestable lines, repaired
+
+ID      | Corrected requirement (with a number and a unit)                 | How it is tested
+FR-09   | NFR-04 A first-year student shall find and reserve a known       | Ask 5 first-year students to reserve a named available
+        | available book in no more than 4 clicks after sign-in.           | book and count the clicks of each.
+FR-14   | NFR-05 Search results shall appear within 2 seconds for a        | Run 100 searches against 50,000 records with 100
+        | catalogue of 50,000 books and 100 concurrent users.              | users and measure every response time.
+FR-15   | NFR-06 The first page of search results shall appear within      | Execute 100 representative searches and time the
+        | 2 seconds for 95% of them.                                       | first result page each time.
+NFR-03  | NFR-03 The system shall have at least 99.5% availability during  | Compare monitoring downtime with the scheduled
+        | library working hours each semester.                             | working hours of the semester.
+
+1.4 The four contradictions, repaired (8 requirements in total)
+
+FR-01  The system shall allow a registered student to borrow at most 5 books without special approval.
+FR-02  The system shall allow a librarian to approve one additional book, increasing the
+       limit to 6 for that loan.
+FR-04  Books marked "reference" shall be used only inside the library and shall not create
+       a take-home loan.
+FR-06  The system shall not offer online renewal for a book marked "reference".
+FR-07  The system shall send an e-mail reminder 2 days before the due date for a loan that
+       is not returned.
+FR-08  The system shall send one overdue e-mail at 09:00 on the first day after the due date
+       if the book remains unreturned.
+FR-16  The system shall retain borrowing transactions in anonymised form indefinitely for
+       statistics.
+FR-17  The system shall delete or anonymise data identifying a student within 1 year after
+       the student leaves the university.
+
+================================================================================
+EXERCISE 2 - The TTPU canteen pre-order system
+================================================================================
+
+2.1 The full review table (exactly 12 defect rows)
+
+ID      | Defect  | What exactly is wrong                                                          | Corrected line (or "delete")
+FR-03   | C       | Contradicts FR-02: payment cannot be both before cooking and at collection.    | The student shall pay in the application before the order is sent to the kitchen; cash payment is not supported in version 1.
+FR-06   | C       | Changes until 11:45 contradict FR-05 cooking starting at 11:30.                | A student shall change an order until 11:25 while its status is Not started.
+FR-08   | C       | Contradicts FR-09: a dish is either orderable with 0 portions or not.          | delete (FR-09 keeps the single stock rule)
+FR-11   | C       | Immediate sending contradicts FR-12 sending one list at 11:00.                 | Each confirmed order shall appear on the kitchen screen within 5 seconds after payment.
+FR-12   | C       | Conflicts with FR-11 and can delay the kitchen up to 30 minutes.               | At 11:00 the system shall send a summary of all confirmed orders in addition to the 5-second individual updates.
+FR-13   | A/T/W   | "Without the internet" is ambiguous and unmeasurable, and it is non-functional | NFR-05 The kitchen screen shall show cached confirmed orders for up to 30 minutes after internet loss.
+        |         | written in the functional list.                                                |
+FR-15   | C       | English-only messages contradict FR-14 three interface languages.              | Messages shall be shown in the language the user selects from Uzbek, Russian and English.
+FR-17   | N       | Python/Django is a design decision, not required behaviour.                    | delete (evaluate technology in the design document)
+FR-18   | N       | Reducing food waste by 30% is a business goal, not software behaviour.         | delete (move to the project plan; measure via reports)
+FR-19   | T/W     | "Secure" is unmeasurable and non-functional in a functional list.              | NFR-04 Payment data shall use TLS 1.3 and no card number or CVV shall be stored.
+FR-20   | N       | The delivery deadline is a project constraint, not system behaviour.           | delete (move to the project plan as a milestone)
+NFR-03  | T       | "Easy to use" is subjective with no measure.                                   | NFR-03 A first-year student shall place a standard order in at most 6 clicks without training.
+
+2.2 The five missing requirements (FR-21 - FR-25)
+
+FR-21  The system shall mark a paid order Uncollected if it is not collected within 60
+       minutes after it is marked Ready, and shall keep the money on the student's account.
+FR-22  The system shall return a cancelled card payment to the original payment method
+       within 5 working days.
+FR-23  The system shall show declared allergens for every dish before the student confirms
+       the order.
+FR-24  The system shall prevent ordering on dates marked Closed in the manager calendar
+       and shall show the next opening time.
+FR-25  Only an authenticated user with the Manager role shall open the manager screen
+       and view the daily revenue.
+
+2.3 The SDLC question - when should each defect have been found (four rows)
+
+ID     | Found now          | Should have been found          | If found only after release (cost chart)
+FR-03  | Requirements       | Requirement gathering /         | About 50-100 units: payment flow, UI, accounting and user training
+       | review             | review (written the same day)   | would all need correction after real payments had been made.
+FR-06  | Requirements       | Requirement review              | About 50 units: students could change food that is already cooking,
+       | review             |                                 | causing refunds and wasted meals.
+FR-11  | Requirements       | Requirement review              | About 50-100 units: the kitchen screen and the cooks' workflow
+       | review             |                                 | would need redesign and retraining after the kitchen already trusts it.
+FR-15  | Requirements       | Requirement review /            | About 50 units: messages and translations across every screen would
+       | review             | prototyping                     | need rework after students complain in their own language.
+
+2.4 Use case "Student orders a meal"
+
+Actor: Student.
+Precondition: the student is signed in, ordering is open (08:00-11:00), and at least one
+dish has portions available.
+
+Main flow:
+1. The system shows today's menu, prices, available portions and allergens.    (FR-01, FR-07, FR-23)
+2. The student selects one or more available dishes.
+3. The system shows the order summary and the total amount.
+4. The student confirms and chooses application payment.
+5. The payment service confirms the payment.                                   (FR-02)
+6. The system assigns a daily-unique order number.                             (FR-10)
+7. The order appears on the kitchen screen within 5 seconds.                   (corrected FR-11)
+8. The system shows the order number and confirmation to the student.
+
+Alternative flow - payment fails: at step 5, if payment is rejected or times out, the
+system creates no confirmed kitchen order, shows the failure reason and lets the student
+retry once or cancel.
+
+Postcondition: a paid order with a unique number is stored and visible to the kitchen, or
+- if payment failed - no confirmed order exists and no meal is cooked.
+
+Traceability (start of the matrix): this use case covers FR-01, FR-02, FR-04, FR-07,
+FR-09, FR-10, corrected FR-11, FR-21, FR-23 and NFR-01.

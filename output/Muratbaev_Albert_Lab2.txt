@@ -1,0 +1,163 @@
+Lab 2 - Requirements Analysis of the TTPU Student Print Service
+Student: Albert Muratbaev
+All tables below answer the homework tasks; every requirement uses "shall".
+
+================================================================================
+TASK 1 - Write the requirements (five techniques knowledge base)
+================================================================================
+
+FUNCTIONAL REQUIREMENTS (11 items, at least ten required)
+
+ID     | Requirement                                                        | F/N | How it would be tested
+FR-01  | The system shall give every new student 100 free pages per         | F   | Register a student and verify a balance of 100 free pages.
+       | semester.
+FR-02  | The system shall allow a student to submit a document as a         | F   | Submit a valid document and verify that a job is created.
+       | print job.
+FR-03  | The system shall reject a print job longer than 50 pages.          | F   | Submit 50-page and 51-page files; accept the first and reject
+       |                                                                    |     | the second.
+FR-04  | The system shall assign every accepted print job a unique          | F   | Submit 100 jobs and verify that no job number repeats.
+       | job number.
+FR-05  | The system shall deduct printed pages from the free-page           | F   | Print 10 pages from a balance of 100 and verify a balance
+       | balance before charging money.                                     |     | of 90.
+FR-06  | After the free balance reaches 0, the system shall charge          | F   | Print 3 black-and-white pages with zero balance and verify
+       | 200 soum for each black-and-white page.                            |     | 600 soum.
+FR-07  | After the free balance reaches 0, the system shall charge          | F   | Print 3 colour pages with zero balance and verify 1,200
+       | 400 soum for each colour page.                                     |     | soum.
+FR-08  | The system shall allow a student to cancel a job only while        | F   | Cancel one waiting and one printed job; only the waiting
+       | its status is Waiting.                                             |     | job is cancelled.
+FR-09  | The system shall show the operator all jobs whose status           | F   | Create waiting and completed jobs and verify only waiting
+       | is Waiting.                                                        |     | jobs appear.
+FR-10  | At the end of each day, the system shall report the total          | F   | Print known jobs and compare the report page total.
+       | number of pages printed.
+FR-11  | At the end of each day, the system shall report the total          | F   | Complete paid jobs and compare the report with calculated
+       | money collected in soum.                                           |     | charges.
+
+NON-FUNCTIONAL REQUIREMENTS (five, four different qualities required)
+
+NFR-01 | The operator shall complete submission-to-queue entry in no more   | N   | Ask the operator to add 5 jobs and count screens and clicks.
+       | than 3 screens and 5 clicks.                                       |Usab.|
+       | (This one is hidden in the customer's text: "make it simple -      |
+       | our operator is 58 years old and has never used anything           |
+       | except Excel.")                                                    |
+NFR-02 | The waiting-job list shall open within 2 seconds with 500 jobs     | N   | Load 500 jobs and measure the list response time.
+       | stored. (Performance - proposed)                                   |Perf.|
+NFR-03 | Only an authenticated operator shall change a job status or        | N   | Try both actions with student and operator accounts.
+       | view daily revenue. (Security - proposed)                          |Secur|
+NFR-04 | The system shall preserve all confirmed jobs and balances after    | N   | Create jobs, interrupt the server and verify all records
+       | an unexpected restart. (Reliability - proposed)                    |Rel. |
+NFR-05 | The operator application shall run in the two latest major         | N   | Repeat the operator workflow in the specified browser
+       | versions of Chrome and Edge. (Portability - proposed)              |Port.|
+
+================================================================================
+TASK 2 - Plan the requirement collection
+================================================================================
+
+2.1 The five techniques - source and expected learning
+
+Interview         | Department head, operator and accountant | Approval rules, payment handling, roles, exceptions and required reports.
+Questionnaire     | At least 100 students                    | File types, colour demand, expected volume and preferred notifications.
+Observation       | Existing print room during busy periods  | Actual service steps, bottlenecks, reprints, queue size.
+Document analysis | Student lists, price rules, receipts     | Identity fields, accounting evidence, semester dates, retention rules.
+Prototyping       | Operator and 5 students                  | Whether submission, queue and cancellation screens are understandable.
+
+2.2 The technique I would use first
+
+Interview the operator. The operator performs the daily process and can quickly expose
+exceptions and practical constraints. Observation should follow immediately, to verify that
+the described process matches reality.
+
+2.3 Eight interview questions (grouped under three headings)
+
+Money and prices:
+1. How and when does a student pay for pages beyond the free allowance?
+2. Are unused free pages carried to the next semester?
+3. When is a refund or a free reprint allowed?
+
+Jobs and documents:
+4. Which file formats and maximum file size must be accepted?
+5. May a job mix colour and black-and-white pages?
+6. What should happen to a paid job that is never collected?
+
+Users and operation:
+7. How is a student identified and who may correct a page balance?
+8. How should the queue work when the printer or the network is unavailable?
+
+================================================================================
+TASK 3 - Repair the requirements of another analyst
+================================================================================
+
+Statement | Broken property and why (one sentence)                              | Corrected requirement (ID, "shall", number)                  | One-line test
+a)        | Not testable: "fast" has no limit.                                  | NFR-06 The waiting-job screen shall open within 2 seconds    | Load 500 jobs and measure 20 openings.
+          |                                                                     | for 500 stored jobs.                                        |
+b)        | Not clear and not complete: "handle the students" names no actor    | FR-13 The system shall allow an operator to find a student   | Search a known ID and compare the displayed record.
+          | and no operation.                                                   | by university ID and view the current page balance.          |
+c)        | Not consistent: limits of 50 and 80 pages conflict.                 | FR-03 The system shall accept jobs of 1-50 pages and reject  | Submit 1-, 50- and 51-page files.
+          |                                                                     | files of 51 pages or more.                                   |
+d)        | Not necessary and not testable: "modern and beautiful" is           | Cannot be repaired by rewriting - see below.                | -
+          | subjective taste with no stakeholder need.                          |                                                              |
+e)        | Not clear and not complete: no pricing rules or inputs.             | FR-14 The system shall calculate 200 soum per black-and-     | Price a mixed known job and compare the total.
+          |                                                                     | white page and 400 soum per colour page after free pages.    |
+f)        | Not consistent/complete: contradicts the paid rule after the        | FR-15 The first 100 pages per student per semester shall be  | Use 100 pages, then print one additional page.
+          | free allowance.                                                     | free; later pages shall use FR-14 prices.                    |
+g)        | Not clear, not testable: "probably", "some kind", "something"       | FR-16 The system shall show a cancellation confirmation      | Cancel 10 waiting jobs and verify message, number
+          | are ambiguous.                                                      | containing the job number within 2 seconds.                  | and time.
+h)        | Not necessary and not traceable: PostgreSQL is an unsupported       | Cannot be repaired by rewriting - see below.                | -
+          | design decision, not user need.                                     |                                                              |
+
+THE TWO STATEMENTS THAT CANNOT BE REPAIRED MERELY BY REWRITING
+
+(d): it expresses aesthetic taste with no established stakeholder need. The fix is not new
+     words but elicitation: find a measurable usability need (click and screen limits for a
+     58-year-old operator) and write NFR-01 from Task 1. Then the statement disappears
+     because a real need replaces it.
+(h): it prescribes implementation technology. It is not a requirement at all; evaluate it
+     during design and record it in the design document if justified - while volume remains
+     below 500 jobs per month, the database choice does not constrain behaviour.
+
+================================================================================
+TASK 4 - What the customer did not say
+================================================================================
+
+SITUATION                                                           | REQUIREMENT ADDED
+The student pays but never collects the output.                     | FR-17 The system shall change an uncollected printed job to Abandoned 3 working days after printing and include it in the daily report.
+The printer jams after charging but before the full job prints.     | FR-18 The operator shall mark a failed job for one free reprint of its unprinted pages.
+A file is corrupt or has an unsupported format.                     | FR-19 The system shall reject an unreadable file before payment and show a reason.
+The student submits the same job twice.                             | FR-20 The system shall warn when the same student submits a file with the same name and page count within 2 minutes.
+The semester changes while balances still exist.                    | FR-21 An administrator shall reset every active student's free balance to 100 pages on the configured semester start date.
+The operator makes an incorrect status or balance change.           | FR-22 The system shall record operator ID, time, old value and new value for every manual status or balance change.
+
+4.3 The most dangerous omission
+
+Charging a student for a job that failed during printing. If a defect for this is found
+only after deployment, students pay for pages they never receive, disputes and refund
+requests flood the operator on the first week, and the department loses trust in a service
+that was supposed to be simple. Per the lecture cost chart, this defect costs about 1 unit
+to close in the requirements phase, roughly 5-10 in design or coding, and 50-100 units
+after release, because payment flow, database records, operator procedures and printed
+receipts all have to be reworked at once.
+
+================================================================================
+TASK 5 - The project through the six phases
+================================================================================
+
+Phase                | What exactly is done in THIS project                                | What comes out of it                | Who does it
+1. Requirement       | Interview the operator and department head, observe the print room, | Approved SRS with use cases         | Analyst, customer, operator, students.
+   gathering         | survey students, define prices, queue, cancellation and reports.    | and acceptance tests.               |
+2. Feasibility       | Estimate a six-week scope, reuse university accounts, check printer | Go/no-go report and a limited       | Analyst, developer, IT administrator,
+   study             | integration, student-data handling and running cost.                | version-1 scope.                    | department head.
+3. Design            | Design submission, operator queue, pricing, balances, job states,   | HLD, LLD, data model and interface  | Developer/architect with operator
+                     | database, security and reporting.                                   | prototype.                          | review.
+4. Coding            | Implement authentication, uploads, page counting, queue, prices,    | Source code, database migrations    | One developer.
+                     | cancellation, reporting and unit tests.                             | and unit tests.                     |
+5. Testing           | Test rules, prices, the 50-page limit, the 100-page balance,        | Test report, defect list and        | Developer, analyst, operator and
+                     | permissions, failures, response time and usability.                 | acceptance result.                  | pilot students.
+6. Deployment and    | Install the kiosk in the print room, import users, train the        | Working service, user guide,        | Developer, university IT and
+   maintenance       | operator, back up data, monitor and correct defects.                | backups and maintenance log.        | operator.
+
+5.2 Feasibility answer
+
+Yes, but only for a small version 1 with the core jobs above and existing university
+infrastructure. The answer depends mainly on SCHEDULE feasibility - one programmer has
+6 weeks, so the scope must be frozen - and on TECHNICAL feasibility of document page
+counting and printer integration; economic and operational feasibility are supported by
+using the existing accounts and one small room.
