@@ -43,7 +43,7 @@ nul
 *.sublime-*
 
 # --- Generated lab archives (rebuilt from the tracked .py files, not hand-made) ---
-lab4/*_solutions.zip
+lab*/*_solutions.zip
 
 # Note: output/pdf/ is NOT ignored - it holds the finished lab deliverables.
 
